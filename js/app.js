@@ -125,19 +125,24 @@ var Star = function() {
 
     this.x = starX.randomElement();
     this.y = starY.randomElement();
+    this.isActive = false;
 };
 
 Star.prototype.render = function() {
-     ctx.drawImage(Resources.get(this.sprite), this.x, this.y, 75, 125);
+  if (player.score === 200) {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y, 75, 125);
+    this.isActive = true;
+  }
 };
 
 Star.prototype.update = function() {
   if(this.x <= player.x + 40 &&
      this.x + 40 >= player.x &&
      this.y <= player.y + 40 &&
-     40 + this.y >= player.y) {
+     40 + this.y >= player.y && this.isActive) {
        this.constructor('hidden');
        player.score += 100;
+       this.isActive = false;
       }
 };
 
@@ -154,17 +159,22 @@ var Heart = function() {
 
     this.x = heartX.randomElement();
     this.y = heartY.randomElement();
+
+    this.isActive = false;
 };
 
 Heart.prototype.render = function() {
+  if (player.score === 500) {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y, 75, 105);
+    this.isActive = true;
+  }
 };
 
 Heart.prototype.update = function() {
   if(this.x <= player.x + 40 &&
      this.x + 20 >= player.x &&
      this.y <= player.y + 40 &&
-     20 + this.y >= player.y) {
+     20 + this.y >= player.y && this.isActive) {
        this.constructor('hidden');
        player.lives += 1;
       }
