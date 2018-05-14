@@ -46,6 +46,7 @@ var Player = function() {
     this.y = 400;
     this.score = 0;
     this.lives = 3;
+    this.finalScore = 0;
 };
 
 Player.prototype.render = function() {
@@ -56,6 +57,9 @@ Player.prototype.update = function() {
     this.checkCollisions();
     this.gamePoints();
     this.gameOver();
+
+    var gameOverContent = document.getElementById('gameOver');
+    gameOverContent.innerHTML = "Game over! \n\rYou finished with " + this.score +" points!";
     document.getElementById("score").innerHTML = "Score: " + this.score + "\n\rLives: " + this.lives;
 };
 
@@ -86,13 +90,31 @@ Player.prototype.gamePoints = function() {
     }
 };
 
+var modal = document.querySelector('.modal');
+var btn = document.querySelector('.restart-button');
+
+function toggleModal() {
+  modal.style.display = "block";
+  modal.classList.add('show-modal');
+}
+
+function remove() {
+  modal.style.display = "none";
+  modal.classList.remove('show-modal');
+}
+
+btn.addEventListener('click', remove);
+
 Player.prototype.gameOver = function() {
-    if(this.lives === 0) {
+
+if (this.lives === 0) {
+        toggleModal();
         this.score = 0;
         this.lives = 3;
-        alert("Game over!");
-        location.reload();
-    }
+      }
+        //alert("Game over!")
+        //location.reload();
+
 };
 
 // Now instantiate your objects.
@@ -177,6 +199,7 @@ Heart.prototype.update = function() {
      20 + this.y >= player.y && this.isActive) {
        this.constructor('hidden');
        player.lives += 1;
+       this.isActive = false;
       }
 };
 
