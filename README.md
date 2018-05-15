@@ -21,7 +21,7 @@ The main challenge is to be fast! When the player reaches more points, the bugs 
 
 To play this game you need a browser. You can download the project and open the index.html file or you can click the link below and start playing now:
 
-https://anikafaldzhieva.github.io/Arcade-game-clone/
+https://anikafaldzhieva.github.io/Classic-Arcade-game-clone/
 
 Have fun!
 
