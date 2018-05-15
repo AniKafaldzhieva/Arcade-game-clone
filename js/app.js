@@ -28,9 +28,7 @@ Enemy.prototype.update = function(dt) {
         this.speed = Math.random() + 4;
     } else if (player.score >= 2000) {
         this.speed = Math.random() + 6;
-    } else if (player.score >= 3000) {
-        this.speed = Math.random() + 17;
-    }
+    } 
 
     if(player.lives === 0) {
         this.freeze();
@@ -110,7 +108,7 @@ Player.prototype.gamePoints = function() {
 
     }
 
-    var gameOverContent = document.getElementById('gameOver');
+    let gameOverContent = document.getElementById('gameOver');
     gameOverContent.innerHTML = "Game over! \n\rYou finished with " + this.score +" points!";
     document.getElementById("score").innerHTML = "Score: " + this.score + "\n\rLives: " + this.lives;
 
@@ -179,6 +177,7 @@ var Heart = function() {
 
 };
 
+//The number of hearts
 var count = 0;
 
 // Draw the heart on the screen
@@ -267,12 +266,15 @@ Player.prototype.handleInput = function(key) {
 };
 
 //Create modal pop up
-var modal = document.querySelector('.modal');
-var restartButton = document.querySelector('.restart-button');
+let modal = document.querySelector('.modal');
+let restartButton = document.querySelector('.restart-button');
 
 function showModal() {
   modal.style.display = "block";
   modal.classList.add('show-modal');
+  
+  document.removeEventListener('keyup');
+  
 }
 
 function removeModal() {
@@ -291,3 +293,12 @@ location.reload();
 }
 
 restartButton.addEventListener('click', removeModal);
+
+//Close button
+let closeButton = document.querySelector('.close');
+
+closeButton.onclick = function() {
+    modal.style.display = "none";
+    modal.classList.remove('show-modal');
+    
+}
