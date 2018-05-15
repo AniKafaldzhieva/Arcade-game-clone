@@ -299,8 +299,4 @@ restartButton.addEventListener('click', removeModal);
 //Close button
 let closeButton = document.querySelector('.close');
 
-closeButton.onclick = function() {
-    modal.style.display = "none";
-    modal.classList.remove('show-modal');
-    
-}
+closeButton.addEventListener('click', removeModal);
