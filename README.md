@@ -1,6 +1,6 @@
 # Classic Arcade Game Clone
 
-![picture](img/aracade-game.png)
+![picture](images/aracade-game.png)
 
 ## Table of Contents
 
