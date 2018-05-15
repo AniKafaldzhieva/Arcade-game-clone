@@ -28,6 +28,12 @@ Enemy.prototype.update = function(dt) {
         this.speed = Math.random() + 4;
     } else if (player.score >= 2000) {
         this.speed = Math.random() + 6;
+    } else if (player.score >= 3000) {
+        this.speed = Math.random() + 17;
+    }
+
+    if(player.lives === 0) {
+        this.freeze();
     }
 
 };
@@ -35,6 +41,19 @@ Enemy.prototype.update = function(dt) {
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+
+};
+
+Enemy.prototype.reset = function() {
+    this.x = 0;
+    this.y = (Math.floor((Math.random() * 3) + 1))*70;
+    this.speed = Math.random() + 2;
+    
+};
+
+Enemy.prototype.freeze = function() {
+    this.speed = 0;
+
 };
 
 // Now write your own player class
@@ -46,11 +65,13 @@ var Player = function() {
     this.y = 400;
     this.score = 0;
     this.lives = 3;
-    this.finalScore = 0;
+
 };
 
+// Draw the player on the screen
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+
 };
 
 Player.prototype.update = function() {
@@ -58,16 +79,16 @@ Player.prototype.update = function() {
     this.gamePoints();
     this.gameOver();
 
-    var gameOverContent = document.getElementById('gameOver');
-    gameOverContent.innerHTML = "Game over! \n\rYou finished with " + this.score +" points!";
-    document.getElementById("score").innerHTML = "Score: " + this.score + "\n\rLives: " + this.lives;
 };
 
+//Reset the player position
 Player.prototype.reset = function() {
     this.x = 200;
     this.y = 400;
+
 };
 
+//Check the collision with the enemies
 Player.prototype.checkCollisions = function() {
     for (let i = 0; i < allEnemies.length; i++) {
         if(allEnemies[i].x <= this.x + 40 &&
@@ -81,80 +102,51 @@ Player.prototype.checkCollisions = function() {
 
 };
 
+//Calculate game points
 Player.prototype.gamePoints = function() {
     if(this.y < -50) {
-        //alert("You win!");
         this.score += 100;
         this.reset();
 
     }
+
+    var gameOverContent = document.getElementById('gameOver');
+    gameOverContent.innerHTML = "Game over! \n\rYou finished with " + this.score +" points!";
+    document.getElementById("score").innerHTML = "Score: " + this.score + "\n\rLives: " + this.lives;
+
 };
 
-var modal = document.querySelector('.modal');
-var btn = document.querySelector('.restart-button');
-
-function toggleModal() {
-  modal.style.display = "block";
-  modal.classList.add('show-modal');
-}
-
-function remove() {
-  modal.style.display = "none";
-  modal.classList.remove('show-modal');
-}
-
-btn.addEventListener('click', remove);
-
+//End of the game
 Player.prototype.gameOver = function() {
+    if (this.lives === 0) {
+        showModal();
 
-if (this.lives === 0) {
-        toggleModal();
-        this.score = 0;
-        this.lives = 3;
-      }
-        //alert("Game over!")
-        //location.reload();
-
-};
-
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-
-var enemy1 = new Enemy();
-var enemy2 = new Enemy();
-var enemy3 = new Enemy();
-var enemy4 = new Enemy();
-
-var allEnemies = [enemy1, enemy2, enemy3, enemy4];
-
-var player = new Player();
-
-//A function for setting random x and y coordinates
-Array.prototype.randomElement = function () {
-  return this[Math.floor(Math.random() * this.length)]
+    }
+    
 };
 
 //A star object
 var Star = function() {
     this.sprite = 'images/Star.png';
 
-    //this.x = (Math.floor((Math.random() * 3) + 1))*101;
-    //this.y = (Math.floor((Math.random() * 3) + 1))*76;
-
     const starX = [15,115,215,315,415];
     const starY = [105,185,265];
 
     this.x = starX.randomElement();
     this.y = starY.randomElement();
+
     this.isActive = false;
+
 };
 
+// Draw the star on the screen
 Star.prototype.render = function() {
   if (player.score === 200) {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y, 75, 125);
     this.isActive = true;
+
   }
+
 };
 
 Star.prototype.update = function() {
@@ -165,17 +157,18 @@ Star.prototype.update = function() {
        this.constructor('hidden');
        player.score += 100;
        this.isActive = false;
-      }
+
+    }
+
 };
 
-var star = new Star();
-
-//A heart object
+//A heart constructor
 var Heart = function() {
     this.sprite = 'images/Heart.png';
 
     //this.x = (Math.floor((Math.random() * 3) + 1))*101;
     //this.y = (Math.floor((Math.random() * 3) + 1))*76;
+
     const heartX = [15,115,215,315,415];
     const heartY = [120,200,280];
 
@@ -183,35 +176,59 @@ var Heart = function() {
     this.y = heartY.randomElement();
 
     this.isActive = false;
+
 };
 
-Heart.prototype.render = function() {
-  if (player.score === 500) {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y, 75, 105);
-    this.isActive = true;
+var count = 0;
+
+// Draw the heart on the screen
+Heart.prototype.render = function() {   
+  if ((player.score === 500 || player.score === 1000 )&& count === 0) {
+      ctx.drawImage(Resources.get(this.sprite), this.x, this.y, 75, 105);
+      this.isActive = true;
+      count = 0;
+
   }
+
 };
 
 Heart.prototype.update = function() {
-  if(this.x <= player.x + 40 &&
-     this.x + 20 >= player.x &&
-     this.y <= player.y + 40 &&
-     20 + this.y >= player.y && this.isActive) {
-       this.constructor('hidden');
-       player.lives += 1;
-       this.isActive = false;
-      }
+    if(this.x <= player.x + 40 &&
+        this.x + 40 >= player.x &&
+        this.y <= player.y + 40 &&
+        20 + this.y >= player.y && this.isActive) {
+          this.constructor('hidden');
+          player.lives += 1;
+          count++;
+          this.isActive = false;
+
+    }
+
 };
 
-var heart = new Heart();
+//A function for setting random x and y coordinates
+Array.prototype.randomElement = function () {
+    return this[Math.floor(Math.random() * this.length)];
 
-/**
-var stone = new Image();
-stone.src = 'images/Star.png';
-stone.onload = function() {
-ctx.drawImage(stone, 115,120);
-}
-**/
+};
+
+// Now instantiate your objects.
+// Place all enemy objects in an array called allEnemies
+// Place the player object in a variable called player
+var firstEnemy = new Enemy();
+var secondEnemy = new Enemy();
+var thirdEnemy = new Enemy();
+var fourthEnemy = new Enemy();
+
+var allEnemies = [firstEnemy, secondEnemy, thirdEnemy, fourthEnemy];
+
+var player = new Player();
+
+//Create a star object
+var star = new Star();
+
+//A heart object
+var heart = new Heart();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
@@ -230,21 +247,47 @@ Player.prototype.handleInput = function(key) {
     if(key == 'left')
     {
         if(this.x != 0)
-          this.x -= 100;
+           this.x -= 100;
     }
     if(key == 'right')
     {
         if(this.x != 400)
-          this.x += 100;
+           this.x += 100;
     }
     if(key == 'up')
     {
         if(this.y != -50)
-        this.y -= 80;
+           this.y -= 80;
     }
     if(key == 'down')
     {
         if(this.y != 400)
-        this.y += 80;
+           this.y += 80;
     }
 };
+
+//Create modal pop up
+var modal = document.querySelector('.modal');
+var restartButton = document.querySelector('.restart-button');
+
+function showModal() {
+  modal.style.display = "block";
+  modal.classList.add('show-modal');
+}
+
+function removeModal() {
+  modal.style.display = "none";
+  modal.classList.remove('show-modal');
+
+  player.lives = 3;
+  player.score = 0;
+
+  allEnemies.forEach(element => {
+    element.reset();
+});
+
+location.reload();
+
+}
+
+restartButton.addEventListener('click', removeModal);
