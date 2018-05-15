@@ -184,7 +184,7 @@ var count = 0;
 // Draw the heart on the screen
 // TODO more hearts
 Heart.prototype.render = function() {   
-  if ((player.score === 500 || player.score === 1000 )&& count === 0) {
+  if (player.score === 500 && count === 0) {
       ctx.drawImage(Resources.get(this.sprite), this.x, this.y, 75, 105);
       this.isActive = true;
       count = 0;
